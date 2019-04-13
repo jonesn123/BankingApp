@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recipe_navigation"
+    app:startDestination="@id/banking">
+
+    <fragment
+        android:id="@+id/banking"
+        android:name="com.hyunyong.myapplication.view.BankingFragment"
+        android:label="@string/banking_time"
+        tools:layout="@layout/fragment_banking" >
+        <action
+            android:id="@+id/next_action"
+            app:destination="@id/recipe" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipe"
+        android:name="com.hyunyong.myapplication.view.RecipeFragment"
+        android:label="@string/recipe_name"
+        tools:layout="@layout/fragment_recipe" >
+        <action
+            android:id="@+id/next_action"
+            app:destination="@id/view_recipe" />
+    </fragment>
+    <fragment
+        android:id="@+id/view_recipe"
+        android:name="com.hyunyong.myapplication.view.ViewRecipeFragment"
+        android:label="@string/recipe_name"
+        tools:layout="@layout/fragment_view_recipe" />
+</navigation>
