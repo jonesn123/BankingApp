@@ -1,29 +1,27 @@
 package com.hyunyong.myapplication.view;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import com.hyunyong.myapplication.R;
+import com.hyunyong.myapplication.viewModel.MainViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
-
-import com.hyunyong.myapplication.R;
-
-import androidx.navigation.fragment.NavHostFragment;
 
 import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavController;
 
 public class MainActivity extends AppCompatActivity {
 
     AppBarConfiguration appBarConfiguration;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "id" + getResources().getResourceName(destination.getId()), Toast.LENGTH_SHORT).show();
             }
         });
+
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getRecipeFromNetwork();
     }
 
     private void setupActionBar(NavController navController,
