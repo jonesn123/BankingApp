@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import androidx.annotation.NonNull;
+import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import okhttp3.OkHttpClient;
@@ -30,16 +31,20 @@ public class NetworkWorker extends Worker {
                 .url("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json")
                 .build();
 
+        Data.Builder builder = new Data.Builder();
         try {
             Response response = client.newCall(request).execute();
 
             String res = response.body().string();
             Log.e("tag", res);
+
+            builder.putString("result", "abc");
+
         } catch (IOException e) {
 
         }
 
         // Indicate whether the task finished successfully with the Result
-        return Result.success();
+        return Result.success(builder.build());
     }
 }
