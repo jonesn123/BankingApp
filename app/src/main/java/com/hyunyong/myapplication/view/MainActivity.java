@@ -4,10 +4,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.hyunyong.myapplication.R;
-import com.hyunyong.myapplication.repository.NetworkWorker;
 import com.hyunyong.myapplication.viewModel.MainViewModel;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,9 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 
 import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavController;
 
@@ -59,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(WorkInfo workInfo) {
                 if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                    String result = workInfo.getOutputData().getString("result");
                 }
             }
         });

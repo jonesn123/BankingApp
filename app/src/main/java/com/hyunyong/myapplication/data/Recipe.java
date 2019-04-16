@@ -1,11 +1,13 @@
 package com.hyunyong.myapplication.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipe {
+public class Recipe implements Serializable {
     private int id;
     private String name;
     private ArrayList<Ingredient> ingredients;
+
     private ArrayList<Step> steps;
     private String image;
 
@@ -26,32 +28,19 @@ public class Recipe {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public ArrayList<Step> getSteps() {
+        return steps;
     }
-
     public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
 }

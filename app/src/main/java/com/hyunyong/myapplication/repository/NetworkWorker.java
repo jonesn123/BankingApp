@@ -3,7 +3,18 @@ package com.hyunyong.myapplication.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.hyunyong.myapplication.data.Ingredient;
+import com.hyunyong.myapplication.data.Recipe;
+import com.hyunyong.myapplication.data.Step;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -31,20 +42,29 @@ public class NetworkWorker extends Worker {
                 .url("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json")
                 .build();
 
-        Data.Builder builder = new Data.Builder();
         try {
             Response response = client.newCall(request).execute();
+            String result = response.body().string();
+            final ObjectMapper mapper = new ObjectMapper();
+            final JsonNode json = mapper.readTree(result);
 
-            String res = response.body().string();
-            Log.e("tag", res);
+            if (json.isArray()) {
+                for (final Iterator<JsonNode> i = json.elements(); i.hasNext(); ) {
+                    final JsonNode jsonNode = i.next();
 
-            builder.putString("result", "abc");
+                    // insert DAO
+                    Recipe recipe = new Gson().fromJson(jsonNode.toString(), Recipe.class);
+                    List<Ingredient> ingredient = recipe.getIngredients();
+                    List<Step> steps = recipe.getSteps();
+
+                }
+            }
 
         } catch (IOException e) {
-
+            e.toString();
         }
 
         // Indicate whether the task finished successfully with the Result
-        return Result.success(builder.build());
+        return Result.success();
     }
 }

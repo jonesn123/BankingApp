@@ -1,12 +1,14 @@
 package com.hyunyong.myapplication.data;
 
-public class Ingredient {
+import java.io.Serializable;
 
-    private int quantity;
+public class Ingredient implements Serializable {
+
+    private double quantity;
     private String measure;
     private String ingredient;
 
-    public Ingredient(int quantity,
+    public Ingredient(double quantity,
                       String measure,
                       String ingredient) {
         this.quantity = quantity;
@@ -14,29 +16,16 @@ public class Ingredient {
         this.ingredient = ingredient;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public String getMeasure() {
         return measure;
     }
 
-    public void setMeasure(String measure) {
-        this.measure = measure;
-    }
-
     public String getIngredient() {
         return ingredient;
     }
-
-    public void setIngredient(String ingredient) {
-        this.ingredient = ingredient;
-    }
-
 
 }
