@@ -16,6 +16,7 @@ public class Ingredient implements Serializable {
         this.ingredient = ingredient;
     }
 
+
     public double getQuantity() {
         return quantity;
     }
@@ -27,5 +28,4 @@ public class Ingredient implements Serializable {
     public String getIngredient() {
         return ingredient;
     }
-
 }

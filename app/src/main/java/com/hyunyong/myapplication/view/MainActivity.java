@@ -23,7 +23,6 @@ import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavControlle
 public class MainActivity extends AppCompatActivity {
 
     AppBarConfiguration appBarConfiguration;
-    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,13 +47,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        viewModel.getMutableLiveData().observe(this, new Observer<WorkInfo>() {
-            @Override
-            public void onChanged(WorkInfo workInfo) {
-                if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                }
+        viewModel.getMutableLiveData().observe(this, workInfo -> {
+            if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+
             }
         });
         viewModel.fetchFromNetwork();

@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.hyunyong.myapplication.data.Ingredient;
 import com.hyunyong.myapplication.data.Recipe;
 import com.hyunyong.myapplication.data.Step;
+import com.hyunyong.myapplication.db.AppDataBase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,10 +27,13 @@ import okhttp3.Response;
 
 public class NetworkWorker extends Worker {
 
+    private Context mContext;
+
     public NetworkWorker(
             @NonNull Context context,
             @NonNull WorkerParameters params) {
         super(context, params);
+        mContext = context;
     }
 
     @Override
@@ -48,14 +52,14 @@ public class NetworkWorker extends Worker {
             final ObjectMapper mapper = new ObjectMapper();
             final JsonNode json = mapper.readTree(result);
 
+            AppDataBase dataBase = AppDataBase.getDatabase(mContext);
             if (json.isArray()) {
                 for (final Iterator<JsonNode> i = json.elements(); i.hasNext(); ) {
                     final JsonNode jsonNode = i.next();
 
                     // insert DAO
                     Recipe recipe = new Gson().fromJson(jsonNode.toString(), Recipe.class);
-                    List<Ingredient> ingredient = recipe.getIngredients();
-                    List<Step> steps = recipe.getSteps();
+                    dataBase.recipeDao().insert(recipe);
 
                 }
             }
