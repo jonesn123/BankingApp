@@ -11,6 +11,7 @@ import com.hyunyong.myapplication.data.Ingredient;
 import com.hyunyong.myapplication.data.Recipe;
 import com.hyunyong.myapplication.data.Step;
 import com.hyunyong.myapplication.db.AppDataBase;
+import com.hyunyong.myapplication.db.dao.RecipeDao;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -53,13 +56,14 @@ public class NetworkWorker extends Worker {
             final JsonNode json = mapper.readTree(result);
 
             AppDataBase dataBase = AppDataBase.getDatabase(mContext);
+            RecipeDao dao = dataBase.recipeDao();
             if (json.isArray()) {
                 for (final Iterator<JsonNode> i = json.elements(); i.hasNext(); ) {
                     final JsonNode jsonNode = i.next();
 
                     // insert DAO
                     Recipe recipe = new Gson().fromJson(jsonNode.toString(), Recipe.class);
-                    dataBase.recipeDao().insert(recipe);
+                    dao.insert(recipe);
 
                 }
             }

@@ -43,6 +43,7 @@ public class BankingFragment extends Fragment {
         List<Recipe> recipes = new ArrayList<>();
         BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(recipes, (view1, item, position) -> Toast.makeText(view1.getContext(), "click :" + item.getName(), Toast.LENGTH_SHORT).show());
         recipeDao.getRecipes().observe(this, items -> {
+            recipes.clear();
             recipes.addAll(items);
             adapter.notifyDataSetChanged();
         });

@@ -7,10 +7,12 @@ import android.widget.TextView;
 
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Recipe;
+import com.hyunyong.myapplication.databinding.ItemRecipeContentBinding;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecyclerViewAdapter.ViewHolder> {
@@ -34,8 +36,7 @@ public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecy
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Recipe recipe = items.get(position);
-        holder.id.setText(String.valueOf(recipe.getId()));
-        holder.name.setText(recipe.getName());
+        holder.binding.setRecipe(recipe);
         holder.itemView.setOnClickListener(v -> listener.onClick(v, recipe, position));
     }
 
@@ -45,13 +46,10 @@ public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecy
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView id;
-        final TextView name;
-
+        ItemRecipeContentBinding binding;
         ViewHolder(View view) {
             super(view);
-            id = view.findViewById(R.id.id);
-            name = view.findViewById(R.id.name);
+            binding = DataBindingUtil.bind(view);
         }
     }
 
