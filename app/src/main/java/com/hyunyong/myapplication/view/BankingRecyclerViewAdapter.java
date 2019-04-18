@@ -36,12 +36,7 @@ public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecy
         final Recipe recipe = items.get(position);
         holder.id.setText(String.valueOf(recipe.getId()));
         holder.name.setText(recipe.getName());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClick(v, recipe, position);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> listener.onClick(v, recipe, position));
     }
 
     @Override

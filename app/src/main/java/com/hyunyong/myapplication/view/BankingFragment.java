@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Recipe;
+import com.hyunyong.myapplication.db.AppDataBase;
+import com.hyunyong.myapplication.db.dao.RecipeDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class BankingFragment extends Fragment {
@@ -35,15 +38,15 @@ public class BankingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView recyclerView = view.findViewById(R.id.backing_recycler_view);
-        List<Recipe> recipes = new ArrayList<>();
-        recipes.add(new Recipe(1,"asdf",null,null,12,""));
+        RecipeDao recipeDao = AppDataBase.getDatabase(getContext()).recipeDao();
 
-        BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(recipes, new BankingRecyclerViewAdapter.OnRecipeItemClickListener() {
-            @Override
-            public void onClick(View view, Recipe item, int position) {
-                Toast.makeText(view.getContext(), "click :" + item.getName(), Toast.LENGTH_SHORT).show();
-            }
+        List<Recipe> recipes = new ArrayList<>();
+        BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(recipes, (view1, item, position) -> Toast.makeText(view1.getContext(), "click :" + item.getName(), Toast.LENGTH_SHORT).show());
+        recipeDao.getRecipes().observe(this, items -> {
+            recipes.addAll(items);
+            adapter.notifyDataSetChanged();
         });
+
         recyclerView.setAdapter(adapter);
     }
 }
