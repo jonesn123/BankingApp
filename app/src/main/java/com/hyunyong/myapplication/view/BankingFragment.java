@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Recipe;
@@ -17,8 +16,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.os.Build.ID;
+import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
 public class BankingFragment extends Fragment {
 
@@ -41,7 +42,12 @@ public class BankingFragment extends Fragment {
         RecipeDao recipeDao = AppDataBase.getDatabase(getContext()).recipeDao();
 
         List<Recipe> recipes = new ArrayList<>();
-        BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(recipes, (view1, item, position) -> Toast.makeText(view1.getContext(), "click :" + item.getName(), Toast.LENGTH_SHORT).show());
+        BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(
+                recipes, (view1, item, position) -> {
+                Bundle args = new Bundle();
+                args.putInt(RecipeFragment.ID, item.getId());
+                    findNavController(this).navigate(R.id.recipe, args);
+                });
         recipeDao.getRecipes().observe(this, items -> {
             recipes.clear();
             recipes.addAll(items);

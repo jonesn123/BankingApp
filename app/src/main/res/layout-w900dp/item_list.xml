@@ -28,7 +28,7 @@
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.hyunyong.myapplication.ItemListActivity"
-        tools:listitem="@layout/item_recipe_content" />
+        tools:listitem="@layout/item_backing_content" />
 
     <FrameLayout
         android:id="@+id/item_detail_container"

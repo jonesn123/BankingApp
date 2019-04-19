@@ -3,11 +3,10 @@ package com.hyunyong.myapplication.view;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Recipe;
-import com.hyunyong.myapplication.databinding.ItemRecipeContentBinding;
+import com.hyunyong.myapplication.databinding.ItemBackingContentBinding;
 
 import java.util.List;
 
@@ -18,9 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecyclerViewAdapter.ViewHolder> {
 
     private List<Recipe> items;
-    private OnRecipeItemClickListener listener;
+    private OnBankingItemClickListener listener;
 
-    BankingRecyclerViewAdapter(List<Recipe> items, OnRecipeItemClickListener listener) {
+    BankingRecyclerViewAdapter(List<Recipe> items, OnBankingItemClickListener listener) {
         this.listener = listener;
         this.items = items;
     }
@@ -29,7 +28,7 @@ public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecy
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_recipe_content, parent, false);
+                .inflate(R.layout.item_backing_content, parent, false);
         return new ViewHolder(view);
     }
 
@@ -46,14 +45,14 @@ public class BankingRecyclerViewAdapter extends RecyclerView.Adapter<BankingRecy
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        ItemRecipeContentBinding binding;
+        ItemBackingContentBinding binding;
         ViewHolder(View view) {
             super(view);
             binding = DataBindingUtil.bind(view);
         }
     }
 
-    interface OnRecipeItemClickListener {
+    interface OnBankingItemClickListener {
         void onClick(View view, Recipe item, int position);
     }
 }
