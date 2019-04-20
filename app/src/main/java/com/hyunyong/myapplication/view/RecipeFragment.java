@@ -1,22 +1,11 @@
 package com.hyunyong.myapplication.view;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Ingredient;
 import com.hyunyong.myapplication.data.Step;
@@ -27,6 +16,14 @@ import com.hyunyong.myapplication.db.dao.RecipeDao;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
 
 /**
@@ -59,26 +56,37 @@ public class RecipeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recipe_recycler_view);
         RecipeDao dao = AppDataBase.getDatabase(getContext()).recipeDao();
+        List<Ingredient> ingredients = new ArrayList<>();
+        RecyclerView ingredientRecyclerView = view.findViewById(R.id.ingredient_recycler_view);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        manager.setOrientation(RecyclerView.HORIZONTAL);
+        ingredientRecyclerView.setLayoutManager(manager);
+
+        IngredientRecyclerViewAdapter ingredientRecyclerViewAdapter = new IngredientRecyclerViewAdapter(ingredients);
+        ingredientRecyclerView.setAdapter(ingredientRecyclerViewAdapter);
         dao.getIngredients(mID).observe(this, str -> {
-            Log.d("ingredients", str);
-            List<Ingredient> ingredients = IngredientConverters.fromString(str);
+            ingredients.clear();
+            ingredients.addAll(IngredientConverters.fromString(str));
+            ingredientRecyclerViewAdapter.notifyDataSetChanged();
         });
 
+        RecyclerView recipeRecyclerView = view.findViewById(R.id.recipe_recycler_view);
         List<Step> steps = new ArrayList<>();
-        RecipeRecyclerViewAdapter adapter = new RecipeRecyclerViewAdapter(steps, new RecipeRecyclerViewAdapter.OnRecipeItemClickListener() {
-            @Override
-            public void onClick(View view, Step item, int position) {
-
-            }
+        RecipeRecyclerViewAdapter recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(steps,
+                (view1, item, position) -> {
+                    Bundle args = new Bundle();
+                    args.putString(ViewRecipeFragment.ARG_DESCRIPTION, item.getDescription());
+                    args.putString(ViewRecipeFragment.ARG_VIDEO_URL, item.getVideoURL());
+                    args.putString(ViewRecipeFragment.THUMBNAIL_URL, item.getThumbnailURL());
+                    findNavController(this).navigate(R.id.view_recipe, args);
         });
 
-        recyclerView.setAdapter(adapter);
+        recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
         dao.getSteps(mID).observe(this, str -> {
             steps.clear();
             steps.addAll(StepConverters.fromString(str));
-            adapter.notifyDataSetChanged();
+            recipeRecyclerViewAdapter.notifyDataSetChanged();
         });
     }
 }

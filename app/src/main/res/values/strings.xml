@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="format_ingredient" formatted="false">%.1f / %s</string>
     <string name="title_item_detail">Item Detail</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_ingredient">INGREDIENTS</string>
+    <string name="title_recipe">RECIPE</string>
+    <string name="title_banking">CHOICE MENU</string>
     <string name="banking_time">Banking Time</string>
     <string name="recipe_name">Recipe Name</string>
+    <string name="next_step">Next Step</string>
+    <string name="prev_step">Prev Step</string>
 </resources>

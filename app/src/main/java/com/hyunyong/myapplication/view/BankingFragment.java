@@ -44,8 +44,8 @@ public class BankingFragment extends Fragment {
         List<Recipe> recipes = new ArrayList<>();
         BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(
                 recipes, (view1, item, position) -> {
-                Bundle args = new Bundle();
-                args.putInt(RecipeFragment.ID, item.getId());
+                    Bundle args = new Bundle();
+                    args.putInt(RecipeFragment.ID, item.getId());
                     findNavController(this).navigate(R.id.recipe, args);
                 });
         recipeDao.getRecipes().observe(this, items -> {
