@@ -1,13 +1,16 @@
 package com.hyunyong.myapplication.view;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -31,6 +34,7 @@ import com.hyunyong.myapplication.db.dao.StepDao;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -57,6 +61,7 @@ public class ViewRecipeFragment extends Fragment {
     private String mVideoUrl;
     private String mThumbnailUrl;
     private StepDao mStepDao;
+    private PlayerView mPlayerView;
 
 
     public ViewRecipeFragment() {
@@ -65,6 +70,7 @@ public class ViewRecipeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mID = getArguments().getInt(ID);
             mDescription = getArguments().getString(DESCRIPTION);
@@ -91,6 +97,21 @@ public class ViewRecipeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mPlayerView = view.findViewById(R.id.player_view);
+        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
+            params.width = params.MATCH_PARENT;
+            params.height = params.MATCH_PARENT;
+            mPlayerView.setLayoutParams(params);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        } else {
+            //unhide your objects here.
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
+            params.width = params.WRAP_CONTENT;
+            params.height = params.WRAP_CONTENT;
+            mPlayerView.setLayoutParams(params);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        }
         Button prev_btn = view.findViewById(R.id.prev_step);
         prev_btn.setOnClickListener(v -> {
             int prev_id = mID - 1;
@@ -150,4 +171,5 @@ public class ViewRecipeFragment extends Fragment {
         player.prepare(videoSource);
         playerView.setPlayer(player);
     }
+
 }
