@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Ingredient;
 import com.hyunyong.myapplication.data.Step;
@@ -13,6 +14,7 @@ import com.hyunyong.myapplication.db.AppDataBase;
 import com.hyunyong.myapplication.db.IngredientConverters;
 import com.hyunyong.myapplication.db.StepConverters;
 import com.hyunyong.myapplication.db.dao.RecipeDao;
+import com.hyunyong.myapplication.db.dao.StepDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,9 @@ public class RecipeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecipeDao dao = AppDataBase.getDatabase(getContext()).recipeDao();
+        AppDataBase dataBase = AppDataBase.getDatabase(getContext());
+        RecipeDao recipeDao = dataBase.recipeDao();
+        StepDao stepDao = dataBase.stepDao();
         List<Ingredient> ingredients = new ArrayList<>();
         RecyclerView ingredientRecyclerView = view.findViewById(R.id.ingredient_recycler_view);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
@@ -65,7 +69,7 @@ public class RecipeFragment extends Fragment {
 
         IngredientRecyclerViewAdapter ingredientRecyclerViewAdapter = new IngredientRecyclerViewAdapter(ingredients);
         ingredientRecyclerView.setAdapter(ingredientRecyclerViewAdapter);
-        dao.getIngredients(mID).observe(this, str -> {
+        recipeDao.getIngredients(mID).observe(this, str -> {
             ingredients.clear();
             ingredients.addAll(IngredientConverters.fromString(str));
             ingredientRecyclerViewAdapter.notifyDataSetChanged();
@@ -76,16 +80,20 @@ public class RecipeFragment extends Fragment {
         RecipeRecyclerViewAdapter recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(steps,
                 (view1, item, position) -> {
                     Bundle args = new Bundle();
-                    args.putString(ViewRecipeFragment.ARG_DESCRIPTION, item.getDescription());
-                    args.putString(ViewRecipeFragment.ARG_VIDEO_URL, item.getVideoURL());
+                    args.putInt(ViewRecipeFragment.ID, item.getId());
+                    args.putString(ViewRecipeFragment.DESCRIPTION, item.getDescription());
+                    args.putString(ViewRecipeFragment.VIDEO_URL, item.getVideoURL());
                     args.putString(ViewRecipeFragment.THUMBNAIL_URL, item.getThumbnailURL());
                     findNavController(this).navigate(R.id.view_recipe, args);
         });
 
         recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
-        dao.getSteps(mID).observe(this, str -> {
+
+        recipeDao.getSteps(mID).observe(this, str -> {
             steps.clear();
             steps.addAll(StepConverters.fromString(str));
+            stepDao.deleteAll();
+            stepDao.insertAll(steps);
             recipeRecyclerViewAdapter.notifyDataSetChanged();
         });
     }

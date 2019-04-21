@@ -3,13 +3,10 @@ package com.hyunyong.myapplication.view;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.databinding.BindingAdapter;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -27,7 +24,20 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.hyunyong.myapplication.R;
+import com.hyunyong.myapplication.data.Step;
 import com.hyunyong.myapplication.databinding.FragmentViewRecipeBinding;
+import com.hyunyong.myapplication.db.AppDataBase;
+import com.hyunyong.myapplication.db.dao.StepDao;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+
+import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
 
 /**
@@ -37,13 +47,16 @@ import com.hyunyong.myapplication.databinding.FragmentViewRecipeBinding;
  * create an instance of this fragment.
  */
 public class ViewRecipeFragment extends Fragment {
-    public static final String ARG_DESCRIPTION = "description";
-    public static final String ARG_VIDEO_URL = "videoURL";
-    public static final String THUMBNAIL_URL = "thumbnailURL";
+    public static final String ID = "id";
+    public static final String DESCRIPTION = "description";
+    public static final String VIDEO_URL = "video_url";
+    public static final String THUMBNAIL_URL = "thumbnail_url";
 
+    private int mID;
     private String mDescription;
     private String mVideoUrl;
     private String mThumbnailUrl;
+    private StepDao mStepDao;
 
 
     public ViewRecipeFragment() {
@@ -53,8 +66,9 @@ public class ViewRecipeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mDescription = getArguments().getString(ARG_DESCRIPTION);
-            mVideoUrl = getArguments().getString(ARG_VIDEO_URL);
+            mID = getArguments().getInt(ID);
+            mDescription = getArguments().getString(DESCRIPTION);
+            mVideoUrl = getArguments().getString(VIDEO_URL);
             mThumbnailUrl = getArguments().getString(THUMBNAIL_URL);
         }
     }
@@ -64,15 +78,51 @@ public class ViewRecipeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         FragmentViewRecipeBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_recipe, container, false);
+        mStepDao = AppDataBase.getDatabase(getContext()).stepDao();
+        binding.setId(mID);
         binding.setDescription(mDescription);
         binding.setVideoUrl(mVideoUrl);
         binding.setThumbnailUrl(mThumbnailUrl);
+        binding.setCount(mStepDao.getCount());
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button prev_btn = view.findViewById(R.id.prev_step);
+        prev_btn.setOnClickListener(v -> {
+            int prev_id = mID - 1;
+            if (prev_id < 0) return;
+            Step step = mStepDao.getStep(prev_id);
+            Bundle args = new Bundle();
+            args.putInt(ViewRecipeFragment.ID, step.getId());
+            args.putString(ViewRecipeFragment.DESCRIPTION, step.getDescription());
+            args.putString(ViewRecipeFragment.VIDEO_URL, step.getVideoURL());
+            args.putString(ViewRecipeFragment.THUMBNAIL_URL, step.getThumbnailURL());
+            findNavController(this).navigate(R.id.view_recipe, args);
+        });
+
+        Button next_btn = view.findViewById(R.id.next_step);
+        next_btn.setOnClickListener(v -> {
+            int next_id = mID + 1;
+            if (next_id >= mStepDao.getCount()) return;
+
+            Step step = mStepDao.getStep(next_id);
+
+            Bundle args = new Bundle();
+            args.putInt(ViewRecipeFragment.ID, step.getId());
+            args.putString(ViewRecipeFragment.DESCRIPTION, step.getDescription());
+            args.putString(ViewRecipeFragment.VIDEO_URL, step.getVideoURL());
+            args.putString(ViewRecipeFragment.THUMBNAIL_URL, step.getThumbnailURL());
+            findNavController(this).navigate(R.id.view_recipe, args);
+        });
     }
 
     @BindingAdapter("imageUrl")
     public static void loadImage(ImageView imageView, String imageUrl) {
-        if(imageUrl == null || "".equals(imageUrl)) return;
+        if (imageUrl == null || "".equals(imageUrl)) return;
         Context context = imageView.getContext();
         if (context == null) return;
         Glide.with(context).load(imageUrl).into(imageView);
@@ -100,17 +150,4 @@ public class ViewRecipeFragment extends Fragment {
         player.prepare(videoSource);
         playerView.setPlayer(player);
     }
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-
 }

@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="id"
+            type="int" />
+
+        <variable
             name="description"
             type="CharSequence" />
 
@@ -16,6 +20,10 @@
         <variable
             name="thumbnailUrl"
             type="String" />
+
+        <variable
+            name="count"
+            type="int" />
     </data>
 
     <FrameLayout
@@ -38,8 +46,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:gravity="center"
                 android:text="@{description}"
-                android:textSize="18dp" />
+                android:textSize="20sp" />
 
 
             <ImageView
@@ -60,6 +71,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:enabled="@{id == 0 ? false : true}"
                 android:text="@string/prev_step" />
 
             <Button
@@ -67,6 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:enabled="@{id == count -1 ? false : true}"
                 android:text="@string/next_step" />
         </LinearLayout>
     </FrameLayout>

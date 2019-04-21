@@ -1,17 +1,16 @@
 package com.hyunyong.myapplication.view;
 
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.MenuItem;
 
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.viewModel.MainViewModel;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.ActionOnlyNavDirections;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
@@ -23,6 +22,7 @@ import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavControlle
 public class MainActivity extends AppCompatActivity {
 
     AppBarConfiguration appBarConfiguration;
+    NavController mNavController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,17 +35,10 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.my_nav_host_fragment);
 
-        NavController navController = host.getNavController();
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        setupActionBar(navController, appBarConfiguration);
+        mNavController = host.getNavController();
+        appBarConfiguration = new AppBarConfiguration.Builder(mNavController.getGraph()).build();
+        setupActionBar(mNavController, appBarConfiguration);
 
-
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                Toast.makeText(MainActivity.this, "id" + getResources().getResourceName(destination.getId()), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
@@ -62,4 +55,9 @@ public class MainActivity extends AppCompatActivity {
         setupActionBarWithNavController(this, navController, appBarConfiguration);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        mNavController.navigateUp();
+        return super.onOptionsItemSelected(item);
+    }
 }
