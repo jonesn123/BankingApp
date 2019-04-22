@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Recipe;
 import com.hyunyong.myapplication.db.AppDataBase;
+import com.hyunyong.myapplication.db.dao.IngredientDao;
 import com.hyunyong.myapplication.db.dao.RecipeDao;
 
 import java.util.ArrayList;
@@ -39,13 +40,17 @@ public class BankingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView recyclerView = view.findViewById(R.id.backing_recycler_view);
-        RecipeDao recipeDao = AppDataBase.getDatabase(getContext()).recipeDao();
+        AppDataBase dataBase = AppDataBase.getDatabase(getContext());
+        RecipeDao recipeDao = dataBase.recipeDao();
+        IngredientDao ingredientDao = dataBase.ingredientDao();
 
         List<Recipe> recipes = new ArrayList<>();
         BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(
                 recipes, (view1, item, position) -> {
                     Bundle args = new Bundle();
                     args.putInt(RecipeFragment.ID, item.getId());
+                    ingredientDao.deleteAll();
+                    ingredientDao.insertAll(item.getIngredients());
                     findNavController(this).navigate(R.id.recipe, args);
                 });
         recipeDao.getRecipes().observe(this, items -> {
