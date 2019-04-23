@@ -1,5 +1,9 @@
 package com.hyunyong.myapplication.view;
 
+import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +28,16 @@ import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
 public class BankingFragment extends Fragment {
 
+    private boolean fromWidget;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getActivity() != null) {
+            fromWidget = getActivity().getIntent().getBooleanExtra(IngredientWidget.INGREDIENTS, false);
+        }
+
     }
 
     @Override
@@ -47,12 +58,22 @@ public class BankingFragment extends Fragment {
         List<Recipe> recipes = new ArrayList<>();
         BankingRecyclerViewAdapter adapter = new BankingRecyclerViewAdapter(
                 recipes, (view1, item, position) -> {
-                    Bundle args = new Bundle();
-                    args.putInt(RecipeFragment.ID, item.getId());
-                    ingredientDao.deleteAll();
-                    ingredientDao.insertAll(item.getIngredients());
-                    findNavController(this).navigate(R.id.recipe, args);
-                });
+            Bundle args = new Bundle();
+            args.putInt(RecipeFragment.ID, item.getId());
+            if (fromWidget) {
+                ingredientDao.deleteAll();
+                ingredientDao.insertAll(item.getIngredients());
+                Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                Activity activity = getActivity();
+                if (activity != null) {
+                    intent.setComponent(new ComponentName(activity, IngredientWidget.class));
+                    activity.sendBroadcast(intent);
+                    activity.finish();
+                }
+            } else {
+                findNavController(this).navigate(R.id.recipe, args);
+            }
+        });
         recipeDao.getRecipes().observe(this, items -> {
             recipes.clear();
             recipes.addAll(items);

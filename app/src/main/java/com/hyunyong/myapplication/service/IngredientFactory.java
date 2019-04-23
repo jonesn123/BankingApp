@@ -10,15 +10,14 @@ import android.widget.RemoteViewsService;
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Ingredient;
 import com.hyunyong.myapplication.db.AppDataBase;
+import com.hyunyong.myapplication.db.dao.IngredientDao;
 import com.hyunyong.myapplication.view.IngredientWidget;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.lifecycle.Observer;
-
 public class IngredientFactory implements RemoteViewsService.RemoteViewsFactory {
-    private List<Ingredient> ingredients;
+    private List<Ingredient> ingredients = new ArrayList<>();
     private Context context;
     private int appWidgetId;
 
@@ -27,7 +26,13 @@ public class IngredientFactory implements RemoteViewsService.RemoteViewsFactory 
         this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
 
-        ingredients = AppDataBase.getDatabase(context).ingredientDao().getIngredients();
+        IngredientDao ingredientDao = AppDataBase.getDatabase(context).ingredientDao();
+        List<Ingredient> ingredients = ingredientDao.getIngredients();
+        if (ingredients != null) {
+            this.ingredients.clear();
+            this.ingredients.addAll(ingredients);
+        }
+
     }
 
     @Override
@@ -37,7 +42,12 @@ public class IngredientFactory implements RemoteViewsService.RemoteViewsFactory 
 
     @Override
     public void onDataSetChanged() {
-
+        IngredientDao ingredientDao = AppDataBase.getDatabase(context).ingredientDao();
+        List<Ingredient> ingredients = ingredientDao.getIngredients();
+        if (ingredients != null) {
+            this.ingredients.clear();
+            this.ingredients.addAll(ingredients);
+        }
     }
 
     @Override

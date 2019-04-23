@@ -1,7 +1,9 @@
 package com.hyunyong.myapplication.view;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -35,6 +37,12 @@ public class IngredientWidget extends AppWidgetProvider {
 
         views.setRemoteAdapter(R.id.appwidget_ingredient_list_view, widgetService);
 
+        Intent clickIntent = new Intent(context, MainActivity.class);
+        clickIntent.putExtra(INGREDIENTS, true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.search_recipe, pendingIntent);
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -50,13 +58,15 @@ public class IngredientWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
+    public void onReceive(Context context, Intent intent) {
+        final String action = intent.getAction();
+        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+            // refresh all your widgets
+            AppWidgetManager mgr = AppWidgetManager.getInstance(context);
+            ComponentName cn = new ComponentName(context, IngredientWidget.class);
+            mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn), R.id.appwidget_ingredient_list_view);
+        }
+        super.onReceive(context, intent);
     }
 }
 
