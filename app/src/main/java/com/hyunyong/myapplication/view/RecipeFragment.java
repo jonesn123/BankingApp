@@ -1,12 +1,11 @@
 package com.hyunyong.myapplication.view;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Ingredient;
 import com.hyunyong.myapplication.data.Step;
@@ -35,16 +34,21 @@ import static androidx.navigation.fragment.NavHostFragment.findNavController;
  * create an instance of this fragment.
  */
 public class RecipeFragment extends Fragment {
-    static final String ID = "id";
 
-    private int mID;
+    private int mID = 1;
+
+    public void setID(int id) {
+        this.mID = id;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mID = getArguments().getInt(ID);
-        }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
     }
 
     @Override
@@ -58,6 +62,7 @@ public class RecipeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        RecipeActivity recipeActivity = (RecipeActivity) getActivity();
         AppDataBase dataBase = AppDataBase.getDatabase(getContext());
         RecipeDao recipeDao = dataBase.recipeDao();
         StepDao stepDao = dataBase.stepDao();
@@ -84,8 +89,14 @@ public class RecipeFragment extends Fragment {
                     args.putString(ViewRecipeFragment.DESCRIPTION, item.getDescription());
                     args.putString(ViewRecipeFragment.VIDEO_URL, item.getVideoURL());
                     args.putString(ViewRecipeFragment.THUMBNAIL_URL, item.getThumbnailURL());
-                    findNavController(this).navigate(R.id.view_recipe, args);
-        });
+                    if (recipeActivity.mTwoPane) {
+                        ViewRecipeFragment viewRecipeFragment = new ViewRecipeFragment();
+                        viewRecipeFragment.setArguments(args);
+                        getFragmentManager().beginTransaction().replace(R.id.recipe_contents, viewRecipeFragment).commit();
+                    } else {
+                        findNavController(this).navigate(R.id.view_recipe, args);
+                    }
+                });
 
         recipeRecyclerView.setAdapter(recipeRecyclerViewAdapter);
 

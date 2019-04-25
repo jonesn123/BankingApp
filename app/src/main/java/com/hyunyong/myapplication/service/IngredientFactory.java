@@ -72,7 +72,7 @@ public class IngredientFactory implements RemoteViewsService.RemoteViewsFactory 
         Intent intent = new Intent();
         Bundle extras = new Bundle();
 
-        extras.putString(IngredientWidget.INGREDIENTS, ingredient.getIngredient());
+        extras.putBoolean(IngredientWidget.INGREDIENTS, true);
         extras.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.putExtras(extras);
 

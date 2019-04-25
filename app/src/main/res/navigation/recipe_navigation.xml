@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/recipe_navigation"
-    app:startDestination="@id/banking">
-
+    app:startDestination="@id/recipe">
+<!--
     <fragment
         android:id="@+id/banking"
         android:name="com.hyunyong.myapplication.view.BankingFragment"
         android:label="@string/banking_time"
-        tools:layout="@layout/fragment_banking" >
+        tools:layout="@layout/activity_banking" >
         <action
             android:id="@+id/next_action"
             app:destination="@id/recipe" />
-    </fragment>
+    </fragment>-->
     <fragment
         android:id="@+id/recipe"
         android:name="com.hyunyong.myapplication.view.RecipeFragment"
@@ -22,18 +22,12 @@
         <action
             android:id="@+id/next_action"
             app:destination="@id/view_recipe" />
-        <action
-            android:id="@+id/prev_action"
-            app:destination="@id/banking" />
     </fragment>
     <fragment
         android:id="@+id/view_recipe"
         android:name="com.hyunyong.myapplication.view.ViewRecipeFragment"
         android:label="@string/recipe_name"
         tools:layout="@layout/fragment_view_recipe" >
-        <action
-            android:id="@+id/next_action"
-            app:destination="@id/banking" />
         <action
             android:id="@+id/prev_action"
             app:destination="@id/recipe" />

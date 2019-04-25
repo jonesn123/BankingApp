@@ -34,6 +34,7 @@ import com.hyunyong.myapplication.db.dao.StepDao;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
@@ -62,7 +63,6 @@ public class ViewRecipeFragment extends Fragment {
     private String mThumbnailUrl;
     private StepDao mStepDao;
     private PlayerView mPlayerView;
-
 
     public ViewRecipeFragment() {
     }
@@ -98,19 +98,25 @@ public class ViewRecipeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mPlayerView = view.findViewById(R.id.player_view);
-        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        RecipeActivity recipeActivity = (RecipeActivity) getActivity();
+        ActionBar actionBar = recipeActivity.getSupportActionBar();
+        if (!recipeActivity.mTwoPane && recipeActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
             params.width = params.MATCH_PARENT;
             params.height = params.MATCH_PARENT;
             mPlayerView.setLayoutParams(params);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
+            if (actionBar != null) {
+                actionBar.hide();
+            }
         } else {
-            //unhide your objects here.
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
             params.width = params.WRAP_CONTENT;
             params.height = params.WRAP_CONTENT;
             mPlayerView.setLayoutParams(params);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+            if (actionBar != null) {
+                actionBar.show();
+            }
         }
         Button prev_btn = view.findViewById(R.id.prev_step);
         prev_btn.setOnClickListener(v -> {
@@ -122,7 +128,13 @@ public class ViewRecipeFragment extends Fragment {
             args.putString(ViewRecipeFragment.DESCRIPTION, step.getDescription());
             args.putString(ViewRecipeFragment.VIDEO_URL, step.getVideoURL());
             args.putString(ViewRecipeFragment.THUMBNAIL_URL, step.getThumbnailURL());
-            findNavController(this).navigate(R.id.view_recipe, args);
+            if(recipeActivity.mTwoPane) {
+                ViewRecipeFragment viewRecipeFragment = new ViewRecipeFragment();
+                viewRecipeFragment.setArguments(args);
+                getFragmentManager().beginTransaction().replace(R.id.recipe_contents, viewRecipeFragment).commit();
+            } else {
+                findNavController(this).navigate(R.id.view_recipe, args);
+            }
         });
 
         Button next_btn = view.findViewById(R.id.next_step);
@@ -137,7 +149,13 @@ public class ViewRecipeFragment extends Fragment {
             args.putString(ViewRecipeFragment.DESCRIPTION, step.getDescription());
             args.putString(ViewRecipeFragment.VIDEO_URL, step.getVideoURL());
             args.putString(ViewRecipeFragment.THUMBNAIL_URL, step.getThumbnailURL());
-            findNavController(this).navigate(R.id.view_recipe, args);
+            if (recipeActivity.mTwoPane) {
+                ViewRecipeFragment viewRecipeFragment = new ViewRecipeFragment();
+                viewRecipeFragment.setArguments(args);
+                getFragmentManager().beginTransaction().replace(R.id.recipe_contents, viewRecipeFragment).commit();
+            } else {
+                findNavController(this).navigate(R.id.view_recipe, args);
+            }
         });
     }
 
