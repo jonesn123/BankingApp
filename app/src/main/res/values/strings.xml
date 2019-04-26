@@ -13,4 +13,5 @@
     <string name="prev_step">Prev Step</string>
     <string name="appwidget_text">INGREDIENT</string>
     <string name="add_widget">Add widget</string>
+    <string name="backing_loading_success">LOAD SUCCESS</string>
 </resources>

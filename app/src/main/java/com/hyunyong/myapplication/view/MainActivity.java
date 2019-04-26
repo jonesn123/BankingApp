@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.hyunyong.myapplication.R;
 import com.hyunyong.myapplication.data.Recipe;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.getMutableLiveData().observe(this, workInfo -> {
             if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-
+                Toast.makeText(this, R.string.backing_loading_success, Toast.LENGTH_SHORT).show();
             }
         });
         viewModel.fetchFromNetwork();
