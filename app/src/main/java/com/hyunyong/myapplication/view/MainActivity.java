@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        recipeDao.getRecipes().observe(this, items -> {
+        recipeDao.getRecipesLiveData().observe(this, items -> {
             recipes.clear();
             recipes.addAll(items);
             adapter.notifyDataSetChanged();
