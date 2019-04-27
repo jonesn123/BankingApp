@@ -13,9 +13,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 
+import static androidx.navigation.fragment.NavHostFragment.findNavController;
 import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavController;
 
 public class RecipeActivity extends AppCompatActivity {
@@ -47,8 +49,7 @@ public class RecipeActivity extends AppCompatActivity {
             if(savedInstanceState == null) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
-                RecipeFragment menuFragment = new RecipeFragment();
-                menuFragment.setID(recipeId);
+                RecipeFragment menuFragment = RecipeFragment.newInstance(recipeId);
                 fragmentManager.beginTransaction()
                         .add(R.id.recipe_menu_list, menuFragment)
                         .commit();
@@ -56,12 +57,11 @@ public class RecipeActivity extends AppCompatActivity {
                 AppDataBase.getDatabase(this).stepDao().getLiveStep(0).observe(this, new Observer<Step>() {
                     @Override
                     public void onChanged(Step step) {
-                        Bundle args = new Bundle();
-                        args.putInt(ViewRecipeFragment.ID, step.getId());
-                        args.putString(ViewRecipeFragment.DESCRIPTION, step.getDescription());
-                        args.putString(ViewRecipeFragment.VIDEO_URL, step.getVideoURL());
-                        args.putString(ViewRecipeFragment.THUMBNAIL_URL, step.getThumbnailURL());
-                        ViewRecipeFragment viewRecipeFragment = new ViewRecipeFragment();
+                        ViewRecipeFragment viewRecipeFragment = ViewRecipeFragment.newInstance(
+                                step.getId(),
+                                step.getDescription(),
+                                step.getVideoURL(),
+                                step.getThumbnailURL());
                         fragmentManager.beginTransaction()
                                 .add(R.id.recipe_contents, viewRecipeFragment)
                                 .commit();
@@ -79,7 +79,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mNavController.navigateUp();
+        mNavController.navigate(R.id.recipe);
         return super.onOptionsItemSelected(item);
     }
 }

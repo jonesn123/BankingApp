@@ -37,13 +37,12 @@ public class RecipeFragment extends Fragment {
 
     private int mID = 1;
 
-    public void setID(int id) {
-        this.mID = id;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mID = getArguments().getInt(RecipeActivity.ID);
+        }
     }
 
     @Override
@@ -57,6 +56,15 @@ public class RecipeFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_recipe, container, false);
     }
+
+    public static RecipeFragment newInstance(int id) {
+        RecipeFragment fragment = new RecipeFragment();
+        Bundle args = new Bundle();
+        args.putInt(RecipeActivity.ID, id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

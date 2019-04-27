@@ -64,8 +64,7 @@ public class ViewRecipeFragment extends Fragment {
     private StepDao mStepDao;
     private PlayerView mPlayerView;
 
-    public ViewRecipeFragment() {
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +76,17 @@ public class ViewRecipeFragment extends Fragment {
             mVideoUrl = getArguments().getString(VIDEO_URL);
             mThumbnailUrl = getArguments().getString(THUMBNAIL_URL);
         }
+    }
+
+    public static ViewRecipeFragment newInstance(int id, String description, String videoUrl, String thumbnailUrl) {
+        ViewRecipeFragment fragment = new ViewRecipeFragment();
+        Bundle args = new Bundle();
+        args.putInt(ID, id);
+        args.putString(DESCRIPTION, description);
+        args.putString(VIDEO_URL, videoUrl);
+        args.putString(THUMBNAIL_URL, thumbnailUrl);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
