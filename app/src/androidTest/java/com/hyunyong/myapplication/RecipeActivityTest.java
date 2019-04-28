@@ -1,6 +1,7 @@
 package com.hyunyong.myapplication;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 
 import com.hyunyong.myapplication.view.RecipeActivity;
 import com.jakewharton.espresso.OkHttp3IdlingResource;
@@ -22,6 +23,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.not;
@@ -42,20 +44,28 @@ public class RecipeActivityTest {
     @Test
     public void recipeTest() {
         Intent intent = new Intent();
-        intent.putExtra("id", 0);
+        intent.putExtra("id", 1);
         activityRule.launchActivity(intent);
 
-        onView(withId(R.id.recipe_two_pain_layout)).check(doesNotExist());
+        if (activityRule.getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            onView(withId(R.id.recipe_two_pain_layout)).check(matches(isDisplayed()));
+
+            onView(withId(R.id.recipe_contents)).check(matches(isDisplayed()));
+
+        } else {
+            onView(withId(R.id.recipe_two_pain_layout)).check(doesNotExist());
+
+            onView(withId(R.id.recipe_recycler_view))
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
 
-        onView(withId(R.id.recipe_recycler_view))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+            onView(withId(R.id.prev_step)).check(matches(not(isEnabled())));
 
-        onView(withId(R.id.prev_step)).check(matches(not(isEnabled())));
+            onView(withId(R.id.next_step)).perform(click());
 
-        onView(withId(R.id.next_step)).perform(click());
+            onView(withId(R.id.prev_step)).check(matches(isEnabled()));
+        }
 
-        onView(withId(R.id.prev_step)).check(matches(isEnabled()));
 
     }
 }
