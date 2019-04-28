@@ -64,7 +64,9 @@ public class ViewRecipeFragment extends Fragment {
     private StepDao mStepDao;
     private PlayerView mPlayerView;
 
-
+    public ViewRecipeFragment() {
+        setRetainInstance(true);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
